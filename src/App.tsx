@@ -1,11 +1,18 @@
 import React from 'react';
 import './App.css';
 import { DOMMessage, DOMMessageResponse } from "./types";
+import Input from './components/Input';
 
 function App() {
 	return (
 		<div className="App">
 			<h1>SEO Extension built with React!</h1>
+
+			<Input 
+				id="test"
+				label='TEST'
+
+			/>
 
 			<ul className="SEOForm">
 				<li className="SEOValidation">
