@@ -1,8 +1,8 @@
 export type DOMMessage = {
-	type: 'GET_DOM'
+	action: string,
+	params: any
 }
 
 export type DOMMessageResponse = {
-	title: string;
-	headlines: string[];
+	message: string
 }

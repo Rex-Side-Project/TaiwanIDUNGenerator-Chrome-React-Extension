@@ -1,11 +1,11 @@
 module.exports = {
     webpack: {
-        configure: (webpackConfig, {env, paths}) => {
+        configure: (webpackConfig, { env, paths }) => {
             return {
                 ...webpackConfig,
                 entry: {
-                    main: [env === 'development' && require.resolve('react-dev-utils/webpackHotDevClient'),paths.appIndexJs].filter(Boolean),
-                    content: './src/chromeServices/DOMEvaluator.ts',
+                    main: [env === 'development' && require.resolve('react-dev-utils/webpackHotDevClient'), paths.appIndexJs].filter(Boolean),
+                    content: './src/chromeServices/ChromeMessageReceiver.ts',
                 },
                 output: {
                     ...webpackConfig.output,
@@ -18,4 +18,4 @@ module.exports = {
             }
         },
     }
- }
+}

@@ -3,8 +3,9 @@ import { useState } from "react";
 
 import Page from "./Page";
 import Heading from "../Heading";
-import Input from "../Input";
+import Input from "../Input/Input";
 import { FieldValues, useForm } from "react-hook-form";
+import { UpdateInput } from "../../chromeServices/ChromeMessageSender";
 
 export const VATWeights = [1, 2, 1, 2, 1, 2, 4, 1];
 export const VerifyMultiple = 10;
@@ -16,15 +17,17 @@ const GeneratorPage = () => {
         register,
         handleSubmit,
         setValue,
+        watch,
         formState: {
             errors,
         }
     } = useForm<FieldValues>({
         defaultValues: {
-            VAT: '',
-            IdCardNumber: ''
+            VAT: ''
         }
     });
+
+    const VAT = watch('VAT');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -36,27 +39,20 @@ const GeneratorPage = () => {
 
     //#region Generate
     const onGenerate = () => {
-        setCustomValue("VAT", generateVAT());
-        setCustomValue("IdCardNumber", 456);
         console.log("onGenerate");
+        setCustomValue("VAT", generateVAT());
     }
     const generateVAT = () => {
-        var randomNum : string | null = null;
-        while(true) {
+        var randomNum: string | null = null;
+        while (true) {
             randomNum = Math.random().toFixed(VATWeights.length).substr(2);
             // console.log(randomNum)
-            if(checkVAT(randomNum) === true) {
+            if (checkVAT(randomNum) === true) {
                 break;
             }
         }
 
         return randomNum;
-    }
-    //#endregion
-
-    //#region Check
-    const onCheck = () => {
-        console.log("check");
     }
     const checkVAT = (value: any) => {
         const VATValue = (value as string).toString();
@@ -69,20 +65,25 @@ const GeneratorPage = () => {
         // 分離十位跟個位
         const digitVATArr = weightedVATArr.map(weighted => {
             return {
-                tensDigit : Math.floor(weighted / 10),
-                unitsDigit : weighted % 10
+                tensDigit: Math.floor(weighted / 10),
+                unitsDigit: weighted % 10
             }
         })
-        
+
         const error = "格式錯誤"
         const aggregateVATArr = digitVATArr.reduce((currVal, b) => currVal + b.tensDigit + b.unitsDigit, 0) % VerifyMultiple;
 
-        if(VATArr[6] === "7") {
+        if (VATArr[6] === "7") {
             return aggregateVATArr === 1 || aggregateVATArr === 0 || error;
         }
         return aggregateVATArr === 0 || error;
     }
     //#endregion
+
+    const onInsert = () => {
+        UpdateInput('vat', VAT);
+        console.log("check");
+    }
 
     const bodyContent = (
         <div className=" flex flex-col gap-4">
@@ -97,12 +98,6 @@ const GeneratorPage = () => {
                 validate={checkVAT}
                 errors={errors}
             />
-            <Input
-                id="IdCardNumber"
-                label="身分證號"
-                register={register}
-                errors={errors}
-            />
         </div>
     )
 
@@ -110,12 +105,12 @@ const GeneratorPage = () => {
         <Page
             disable={isLoading}
             title="產生器"
-            actionLable="檢查"
-            onSubmit={handleSubmit(onCheck)}
             onClose={() => { }}
             body={bodyContent}
             secondaryActionLable="產生"
             secondaryAction={onGenerate}
+            actionLable="寫入"
+            onSubmit={handleSubmit(onInsert)}
         />
     )
 }
